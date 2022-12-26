@@ -1,0 +1,22 @@
+---
+title: "Boletim Eletrônico sobre o Sarampo no Brasil, 2010 - 2020"
+description: |
+  Todo o conteúdo deste site faz parte do Projeto PMA INOVA FIOCRUZ 2020, intitulado *Análise geográfica da Cobertura Vacinal e a ocorrência do Sarampo no Brasil, 2000-2019.*
+site: distill::distill_website
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+
+<p align="justify">Sarampo é uma doença altamente contagiosa causada pelo vírus do sarampo (*Measles morbillivirus*). Os sinais e sintomas iniciais geralmente incluem febre, muitas vezes superior a 40 ºC, tosse, corrimento nasal e olhos inflamados. Dois ou três dias depois do início dos sintomas formam-se no interior da boca pequenos pontos brancos, denominados sinais de Koplik.</p>
+
+<p align="justify">Entre três a cinco dias depois do início dos sintomas aparece uma mancha vermelha e plana que geralmente tem início na face e daí se espalha para o resto do corpo. </p>
+
+<p align="justify">Os sintomas começam-se a manifestar entre dez e doze dias depois do contágio e duram entre sete a dez dias. Em cerca de 30% dos casos ocorrem complicações, as quais podem incluir, entre outras, diarreia, cegueira, inflamação do cérebro e pneumonia. A rubéola e a roséola, apesar de causarem sintomas semelhantes aos do sarampo, são causadas por vírus diferentes e apresentam características distintas.</p>
+
+```{r pressure, echo=FALSE, fig.cap="por MArta Bonimond", out.width = '100%'}
+knitr::include_graphics("images/tirinha1.png")
+```

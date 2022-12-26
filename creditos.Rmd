@@ -1,0 +1,34 @@
+---
+title: "Créditos"
+description: |
+  Some additional details about the website
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+  - name: "Coordenação: Yara Hökerberg"
+    url: ([yarahahr@ini.fiocruz.br]())
+    affiliation: LABEPICIN/INI/FIOCRUZ
+    affiliation_url: https://www.ini.fiocruz.br/labepiclin
+    
+  - name: "Vice-Coordenação: Raquel Vasconcelos"
+    url: ([raquel.vasconcellos@ini.fiocruz.br]())
+    affiliation: LABEPICIN/INI/FIOCRUZ
+    affiliation_url: https://www.ini.fiocruz.br/labepiclin
+    
+  - name: "Sônia Regina Lambert"
+    url: ([sonia.lambert@ini.fiocruz.br]())
+    affiliation: LABEPICIN/INI/FIOCRUZ
+    affiliation_url: https://www.ini.fiocruz.br/labepiclin
+    
+  - name: "Luan da Silva"
+    url: ([snoedasilva@gmail.com]())
+    affiliation: IFRJ
+    affiliation_url: 
+    
+  - name: "Wagner Tassinari"
+    url: ([tassinari@ufrrj.br]())
+    affiliation: DEMAT/ICE/UFRRJ
+    affiliation_url: http://www.ice.ufrrj.br/demat/

@@ -1,0 +1,47 @@
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+@import url('https://fonts.googleapis.com/css2?family=Amiri');
+@import url('https://fonts.googleapis.com/css2?family=Bitter');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono');
+
+scope {
+  --a-property:       50px;
+  --another-property: #fff;
+}
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- More properties --*/
+  ...
+}
+
+html {
+  ...
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    "Amiri", serif;
+  --mono-font:       "DM Mono", monospace;
+  --body-font:       "Bitter", sans-serif;
+  --navbar-font:     "Amiri", serif;
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       28px;    
+  --text-color:       #c21313; /* edited */
+  --text-size:        20px;
+  --hover-color:      #ff5700; /* edited */
+  --bkgd-color:       #ffd8db; /* edited */
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
