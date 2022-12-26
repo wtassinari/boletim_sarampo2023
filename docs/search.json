@@ -6,7 +6,7 @@
       "description": "Some additional details about the website",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2022-12-26T19:16:18-03:00"
+      "last_modified": "2022-12-26T19:41:53-03:00"
     },
     {
       "path": "creditos.html",
@@ -14,7 +14,7 @@
       "description": "Some additional details about the website",
       "author": [],
       "contents": "\nname: “Coordenação: Yara Hökerberg”\nurl: (yarahahr@ini.fiocruz.br)\naffiliation: LABEPICIN/INI/FIOCRUZ\naffiliation_url: https://www.ini.fiocruz.br/labepiclin\nname: “Vice-Coordenação: Raquel Vasconcelos”\nurl: (raquel.vasconcellos@ini.fiocruz.br)\naffiliation: LABEPICIN/INI/FIOCRUZ\naffiliation_url: https://www.ini.fiocruz.br/labepiclin\nname: “Sônia Regina Lambert”\nurl: (sonia.lambert@ini.fiocruz.br)\naffiliation: LABEPICIN/INI/FIOCRUZ\naffiliation_url: https://www.ini.fiocruz.br/labepiclin\nname: “Luan da Silva”\nurl: (snoedasilva@gmail.com)\naffiliation: IFRJ\naffiliation_url:\nname: “Wagner Tassinari”\nurl: (tassinari@ufrrj.br)\naffiliation: DEMAT/ICE/UFRRJ\naffiliation_url: http://www.ice.ufrrj.br/demat/\n\n\n\n",
-      "last_modified": "2022-12-26T19:16:18-03:00"
+      "last_modified": "2022-12-26T19:41:53-03:00"
     },
     {
       "path": "index.html",
@@ -22,8 +22,8 @@
       "description": "Todo o conteúdo deste site faz parte do Projeto PMA INOVA FIOCRUZ 2020, intitulado *Análise geográfica da Cobertura Vacinal e a ocorrência do Sarampo no Brasil, 2000-2019.*\n",
       "author": [],
       "contents": "\n\nSarampo é uma doença altamente contagiosa causada pelo vírus do sarampo (Measles morbillivirus). Os sinais e sintomas iniciais geralmente incluem febre, muitas vezes superior a 40 ºC, tosse, corrimento nasal e olhos inflamados. Dois ou três dias depois do início dos sintomas formam-se no interior da boca pequenos pontos brancos, denominados sinais de Koplik.\n\n\nEntre três a cinco dias depois do início dos sintomas aparece uma mancha vermelha e plana que geralmente tem início na face e daí se espalha para o resto do corpo.\n\n\nOs sintomas começam-se a manifestar entre dez e doze dias depois do contágio e duram entre sete a dez dias. Em cerca de 30% dos casos ocorrem complicações, as quais podem incluir, entre outras, diarreia, cegueira, inflamação do cérebro e pneumonia. A rubéola e a roséola, apesar de causarem sintomas semelhantes aos do sarampo, são causadas por vírus diferentes e apresentam características distintas.\n\n\n\n\nFigure 1: por MArta Bonimond\n\n\n\n\n\n\n",
-      "last_modified": "2022-12-26T19:16:18-03:00"
+      "last_modified": "2022-12-26T19:41:53-03:00"
     }
   ],
-  "collections": []
+  "collections": ["posts/posts.json"]
 }
