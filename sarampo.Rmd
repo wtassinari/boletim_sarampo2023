@@ -4,8 +4,6 @@ description: |
   Some additional details about the website
 ---
 
-![](logo_ini.png){width=100%}
-
 ```{r setup, include=FALSE}
 # https://bootswatch.com/
 # knitr::opts_chunk$set(echo = TRUE)
@@ -61,7 +59,7 @@ delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 ## Base tratada (só casos Sarampo)
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
 casos$DT_SIN_PRI2 <- as.Date(casos$DT_SIN_PRI, format="%m/%d/%Y")
  casos <- casos |> mutate(sem_epi = lubridate::epiweek(as.Date(DT_SIN_PRI2)),
                           ano_epi = lubridate::epiyear(as.Date(DT_SIN_PRI2)),
@@ -72,7 +70,7 @@ casos$DT_SIN_PRI2 <- as.Date(casos$DT_SIN_PRI, format="%m/%d/%Y")
 ### Serie temporal por ano
 
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
 # Fazendo uma tabela de anos
 ano_epi <- 2000:2020
 freq <- rep(0, 21)
@@ -103,7 +101,7 @@ casos.st.ano |>
 
 ---
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
 #### Fazendo com o dygraph
 # casos.st.anos2 <- ts(casos.st.ano$casos.sarampo, start=c(2000), end=c(2020), frequency=1)
 # 
@@ -128,7 +126,7 @@ ggplotly(p)
 
 ### Serie temporal mensal
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
 # Fazendo uma tabela de anos e meses
 mes_ano2000 <- as.data.frame(yearmonth(make_date(year = 2000, month = 1:12))) |>
                rename_at(vars('yearmonth(make_date(year = 2000, month = 1:12))'), ~ c('mes_ano')) |>
@@ -213,7 +211,7 @@ casos.st <- mes_tabela |>
 ```
 
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
 
 casos.st2 <- ts(casos.st$casos.sarampo, start=c(2000, 1), end=c(2020, 12), frequency=12)
 
@@ -232,7 +230,7 @@ dygraph(casos.st2) |>
 
 ### Serie temporal por ano
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
 
 casos_2000_2007$DT_SIN_PRI2 <- as.Date(casos_2000_2007$DT_SIN_PRI, format="%d/%m/%Y")
 casos_2000_2007 <- casos_2000_2007 |> mutate(sem_epi = lubridate::epiweek(as.Date(DT_SIN_PRI2)),
@@ -270,7 +268,7 @@ casos.st.orig.ano |>
 ```
 
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
 #### Fazendo com o dygraph
 # casos.st.orig.ano2 <- ts(casos.st.orig.ano$casos.exantematicas, start=c(2000), end=c(2020), frequency=1)
 # 
@@ -295,7 +293,7 @@ ggplotly(p)
 
 ### Serie temporal mensal
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
 
 casos.orig.st <- casos.orig |> 
            group_by(mes_ano) |>
@@ -309,7 +307,7 @@ casos.orig.st <- mes_tabela |>
 
 ---
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
 
 
 casos.orig.st2 <- ts(casos.orig.st$casos.exantematicas, start=c(2000, 1), end=c(2021, 1), frequency=12)
@@ -327,7 +325,7 @@ dygraph(casos.orig.st2) |>
 
 ## Análise Espacial
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
 # Agregando os casos de sarampo por município de residencia
 
 casos.mun <- casos |> 
@@ -373,7 +371,7 @@ casos.meso <- casos.mun.2 |>
 ```
 
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
 # Baixando os mapas
 # uf.sf <- read_state(year=2019)
 # mun.sf <- read_municipality(year=2019)
@@ -413,7 +411,7 @@ meso.longlat <- meso.longlat |>  mutate(casos = replace_na(casos, 0))
 ### Distribuição dos casos de sarampo por Microrregiões
 
 
-```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"}
 mytext.micro <- paste("<p>", "UF: ", mun.longlat$name_state, "<p>",
                 "<p>", "Microregião: ", micro.longlat$name_micro, "<p>",
                 "<p>", "Casos: ", micro.longlat$casos, "<p>",
