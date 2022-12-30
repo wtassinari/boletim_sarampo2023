@@ -10,7 +10,7 @@ navbar:
     href: https://bvsms.saude.gov.br/sarampo/
   search: TRUE
   right:
-    - text: "Geral"
+    - text: "Introdução"
       href: index.html
       
     - text: "Sobre"
@@ -18,10 +18,10 @@ navbar:
       
     - text: "Análises Estatísticas"
       menu:
-        - text: "Publishing Articles"
-          href: publish_article.html
-        - text: "Publishing a Website"
-          href: publish_website.html
+        - text: "Vacina"
+          href: vacina.html
+        - text: "Sarampo"
+          href: sarampo.html
  
     - text: "Créditos"
       href: creditos.html

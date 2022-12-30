@@ -1,0 +1,497 @@
+---
+title: "Sarampo"
+description: |
+  Some additional details about the website
+---
+
+![](logo_ini.png){width=100%}
+
+```{r setup, include=FALSE}
+# https://bootswatch.com/
+# knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+# Caso não o pacote pacman não esteja instalado
+if(!require(pacman)) install.packages("pacman")
+
+# Lendo as bibliotecas 
+pacman::p_load(readxl, tidyverse, ggplot2, dplyr, kableExtra, plotly, DT,
+               sf, sp, maptools, colorspace, rgdal, spatstat, MASS, raster, 
+               hrbrthemes, zoo, lubridate, leaflet, ggmap, htmltools, 
+               leaflet.extras, dygraphs, xts, ggthemes, gtsummary, viridis, 
+               leafpop, gridExtra, echarts4r, ggfortify, mgcv, tmap, tmapools,
+               githubinstall, EpiWeek, tsibble, aweek, plotly, geobr, readr)
+
+# Desligando a notação científica no R
+options(scipen=999)
+
+# https://cran.r-project.org/web/packages/epiR/vignettes/epiR_descriptive.html
+# https://epirhandbook.com/en/time-series-and-outbreak-detection.html
+```
+
+---
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+
+casos <- read_delim("bases/casosdesarampo1.csv", 
+ delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+munic <- read_excel("bases/DTB_BRASIL_MUNICIPIO.xls")
+
+munic <- munic |> 
+         select("UF", "Nome_UF", "Mesorregião Geográfica", "Nome_Mesorregião", "Microrregião Geográfica", "Nome_Microrregião", "Código Município Completo", "Nome_Município") |>
+         rename_at(vars("UF", "Nome_UF", "Mesorregião Geográfica", "Nome_Mesorregião", "Microrregião Geográfica", "Nome_Microrregião", "Código Município Completo", "Nome_Município"), 
+          ~ c("cod_uf", "nome_uf","cod_meso", "nome_meso",
+              "cod_micro", "nome_micro","cod_mun", "nome_mun")) |>
+         mutate(cod_mun2 = substr(cod_mun, 1, 6)) #recortando digitos
+
+
+
+### Dados originais
+
+casos_2000_2007 <- read_delim("Bases originais/exant Sinan_ano_ 2000_2007.csv", 
+delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+casos_2007_2020 <- read_delim("Bases originais/exant Sinan_ano_2007_2020.csv", 
+delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+
+```
+
+## Base tratada (só casos Sarampo)
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+casos$DT_SIN_PRI2 <- as.Date(casos$DT_SIN_PRI, format="%m/%d/%Y")
+ casos <- casos |> mutate(sem_epi = lubridate::epiweek(as.Date(DT_SIN_PRI2)),
+                          ano_epi = lubridate::epiyear(as.Date(DT_SIN_PRI2)),
+                          data_sem = aweek::get_date(sem_epi, ano_epi, start =7),
+                          mes_ano = yearmonth(DT_SIN_PRI2))
+```
+
+### Serie temporal por ano
+
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+# Fazendo uma tabela de anos
+ano_epi <- 2000:2020
+freq <- rep(0, 21)
+ano_tabela <- as.data.frame(cbind(ano_epi, freq))
+
+casos.st.ano <- casos |> 
+           group_by(ano_epi) |>
+           count(name="casos.sarampo") |>
+           filter(ano_epi > 1999 & ano_epi < 2021) 
+
+casos.st.ano <- ano_tabela |>
+           left_join(casos.st.ano, by="ano_epi") |>
+            mutate(casos.sarampo = ifelse(is.na(casos.sarampo), 0, casos.sarampo)) |>
+            dplyr::select(ano_epi, casos.sarampo)
+
+
+# casos.st.ano$ano_epi <- as.factor(casos.st.ano$ano_epi)
+# levels(casos.st.ano$ano_epi) <- c('2000','2001','2002','2003','2004','2005','2006','2007','2008','2009',
+#                                 '2010','2011','2012','2013','2014','2015','2016','2017','2018','2019', '2020')
+
+
+casos.st.ano |>
+  select(ano_epi, casos.sarampo) |>
+  kbl() |>
+  kable_paper("hover", full_width=F)
+
+```
+
+---
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+#### Fazendo com o dygraph
+# casos.st.anos2 <- ts(casos.st.ano$casos.sarampo, start=c(2000), end=c(2020), frequency=1)
+# 
+# dygraph(casos.st.anos2) |>  
+#   dySeries("V1", label = "Casos de Sarampo") |>
+#   dyOptions(stackedGraph = TRUE) |>
+#                             dyBarChart() |>
+#                             dyRangeSelector(height = 20) |> 
+#                             dyAxis("y", label = "Casos de Sarampo") |> 
+#                             dyUnzoom() 
+
+p <- ggplot(casos.st.ano, aes(x=ano_epi, y=casos.sarampo)) + 
+     geom_bar(stat = "identity") +
+     xlab("Anos") +  ylab("Casos de Sarampo") +
+     theme_minimal()
+
+ggplotly(p)
+
+```
+
+---
+
+### Serie temporal mensal
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+# Fazendo uma tabela de anos e meses
+mes_ano2000 <- as.data.frame(yearmonth(make_date(year = 2000, month = 1:12))) |>
+               rename_at(vars('yearmonth(make_date(year = 2000, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2001 <- as.data.frame(yearmonth(make_date(year = 2001, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2001, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2002 <- as.data.frame(yearmonth(make_date(year = 2002, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2002, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2003 <- as.data.frame(yearmonth(make_date(year = 2003, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2003, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2004 <- as.data.frame(yearmonth(make_date(year = 2004, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2004, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2005 <- as.data.frame(yearmonth(make_date(year = 2005, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2005, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2006 <- as.data.frame(yearmonth(make_date(year = 2006, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2006, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2007 <- as.data.frame(yearmonth(make_date(year = 2007, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2007, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2008 <- as.data.frame(yearmonth(make_date(year = 2008, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2008, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2009 <- as.data.frame(yearmonth(make_date(year = 2009, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2009, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2010 <- as.data.frame(yearmonth(make_date(year = 2010, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2010, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2011 <- as.data.frame(yearmonth(make_date(year = 2011, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2011, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2012 <- as.data.frame(yearmonth(make_date(year = 2012, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2012, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2013 <- as.data.frame(yearmonth(make_date(year = 2013, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2013, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2014 <- as.data.frame(yearmonth(make_date(year = 2014, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2014, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2015 <- as.data.frame(yearmonth(make_date(year = 2015, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2015, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2016 <- as.data.frame(yearmonth(make_date(year = 2016, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2016, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2017 <- as.data.frame(yearmonth(make_date(year = 2017, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2017, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2018 <- as.data.frame(yearmonth(make_date(year = 2018, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2018, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2019 <- as.data.frame(yearmonth(make_date(year = 2019, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2019, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+mes_ano2020 <- as.data.frame(yearmonth(make_date(year = 2020, month = 1:12)))|>
+               rename_at(vars('yearmonth(make_date(year = 2020, month = 1:12))'), ~ c('mes_ano')) |>
+               mutate(freq = 1)
+
+mes_tabela <- rbind(mes_ano2000, mes_ano2001, mes_ano2002, mes_ano2003, mes_ano2004, mes_ano2005, mes_ano2006,
+                    mes_ano2007, mes_ano2008, mes_ano2009, mes_ano2010, mes_ano2011, mes_ano2012, mes_ano2013,
+                    mes_ano2014, mes_ano2015, mes_ano2016, mes_ano2017, mes_ano2018, mes_ano2019, mes_ano2010)
+
+rm(mes_ano2000, mes_ano2001, mes_ano2002, mes_ano2003, mes_ano2004, mes_ano2005, mes_ano2006,
+                    mes_ano2007, mes_ano2008, mes_ano2009, mes_ano2010, mes_ano2011, mes_ano2012, mes_ano2013,
+                    mes_ano2014, mes_ano2015, mes_ano2016, mes_ano2017, mes_ano2018, mes_ano2019, mes_ano2010)
+
+casos.st <- casos |> 
+           group_by(mes_ano) |>
+           count(name="casos.sarampo") 
+
+casos.st <- mes_tabela |>
+           left_join(casos.st, by="mes_ano") |>
+            mutate(casos.sarampo = ifelse(is.na(casos.sarampo), 0, casos.sarampo)) |>
+            dplyr::select(mes_ano, casos.sarampo)
+```
+
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+
+casos.st2 <- ts(casos.st$casos.sarampo, start=c(2000, 1), end=c(2020, 12), frequency=12)
+
+dygraph(casos.st2) |>  
+  dySeries("V1", label = "Casos de Sarampo")|>  
+    dyOptions(stackedGraph = TRUE) |>
+                       dyRangeSelector(height = 20) |> 
+                       dyAxis("y", label = "Casos de Sarampo") |> 
+                       dyUnzoom() 
+
+```
+
+---
+
+## Base original (Exantemáticas)
+
+### Serie temporal por ano
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+
+casos_2000_2007$DT_SIN_PRI2 <- as.Date(casos_2000_2007$DT_SIN_PRI, format="%d/%m/%Y")
+casos_2000_2007 <- casos_2000_2007 |> mutate(sem_epi = lubridate::epiweek(as.Date(DT_SIN_PRI2)),
+                          ano_epi = lubridate::epiyear(as.Date(DT_SIN_PRI2)),
+                          data_sem = aweek::get_date(sem_epi, ano_epi, start =7),
+                          mes_ano = yearmonth(DT_SIN_PRI2))
+
+casos_2007_2020$DT_SIN_PRI2 <- as.Date(casos_2007_2020$DT_SIN_PRI, format="%d/%m/%Y")
+casos_2007_2020 <- casos_2007_2020 |> mutate(sem_epi = lubridate::epiweek(as.Date(DT_SIN_PRI2)),
+                          ano_epi = lubridate::epiyear(as.Date(DT_SIN_PRI2)),
+                          data_sem = aweek::get_date(sem_epi, ano_epi, start =7),
+                          mes_ano = yearmonth(DT_SIN_PRI2))
+
+casos_2000_2007p <- casos_2000_2007 |> select(mes_ano, ano_epi)
+casos_2007_2020p <- casos_2007_2020 |> select(mes_ano, ano_epi)
+
+casos.orig <- rbind(casos_2000_2007p, casos_2007_2020p)
+
+# Fazendo uma tabela de anos
+
+casos.st.orig.ano <- casos.orig |> 
+           group_by(ano_epi) |>
+           count(name="casos.exantematicas") 
+
+casos.st.orig.ano <- ano_tabela |>
+           left_join(casos.st.orig.ano, by="ano_epi") |>
+            mutate(casos.exantematicas = ifelse(is.na(casos.exantematicas), 0, casos.exantematicas)) |>
+            dplyr::select(ano_epi, casos.exantematicas)
+
+casos.st.orig.ano |>
+  select(ano_epi, casos.exantematicas) |>
+  kbl() |>
+  kable_paper("hover", full_width=F)
+
+```
+
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+#### Fazendo com o dygraph
+# casos.st.orig.ano2 <- ts(casos.st.orig.ano$casos.exantematicas, start=c(2000), end=c(2020), frequency=1)
+# 
+# dygraph(casos.st.orig.ano2) |>  
+#    dySeries("V1", label = "Casos de Exantematicas") |>
+#     dyOptions(stackedGraph = TRUE) |>
+#                             dyBarChart() |>
+#                             dyRangeSelector(height = 20) |> 
+#                             dyAxis("y", label = "Casos de Exantematicas") |> 
+#                             dyUnzoom() 
+
+p <- ggplot(casos.st.orig.ano, aes(x=ano_epi, y=casos.exantematicas)) + 
+     geom_bar(stat = "identity") +
+     xlab("Anos") +  ylab("Casos Exantemáticas") +
+     theme_minimal()
+
+ggplotly(p)
+
+```
+
+---
+
+### Serie temporal mensal
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+
+casos.orig.st <- casos.orig |> 
+           group_by(mes_ano) |>
+           count(name="casos.exantematicas") 
+
+casos.orig.st <- mes_tabela |>
+           left_join(casos.orig.st, by="mes_ano") |>
+            mutate(casos.exantematicas = ifelse(is.na(casos.exantematicas), 0, casos.exantematicas)) |>
+            dplyr::select(mes_ano, casos.exantematicas)
+```
+
+---
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
+
+
+casos.orig.st2 <- ts(casos.orig.st$casos.exantematicas, start=c(2000, 1), end=c(2021, 1), frequency=12)
+
+dygraph(casos.orig.st2) |> 
+            dySeries("V1", label = "Casos de Exantematicas") |>
+            dyOptions(stackedGraph = TRUE) |>
+                       dyRangeSelector(height = 20) |> 
+                       dyAxis("y", label = "Casos de Exantematicas") |> 
+                       dyUnzoom() 
+
+```
+
+---
+
+## Análise Espacial
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+# Agregando os casos de sarampo por município de residencia
+
+casos.mun <- casos |> 
+             mutate(cod_mun2 = substr(ID_MN_RESI, 1, 6)) |> #recortando digitos
+             group_by(cod_mun2) |>
+             summarise(casos = n()) 
+             
+
+# # 1) Criar uma variavel indicando os municipios dos casos que tem 6 
+# # e os com 6 digitos
+# 
+# casos.mun <- casos.mun |> 
+#               mutate(grupo = nchar(as.integer(ID_MN_RESI))) 
+# 
+# # 2) Separar os bancos para fazer os joins separados
+# 
+# casos.mun.7 <- casos.mun |> 
+#               filter(grupo == 7)
+# casos.mun.6 <- casos.mun |> 
+#               filter(grupo == 6)
+
+
+casos.mun.2 <- munic |>
+                   left_join(casos.mun, by="cod_mun2") |>
+                   mutate(casos = replace_na(casos, 0), 
+                          cod_mun = as.numeric(cod_mun))  
+                 
+
+# Agregando por microregioes
+
+casos.micro <- casos.mun.2 |> 
+                # mutate(cod_micro = as.factor(cod_micro)) |>
+                group_by(nome_micro) |>
+                summarise(casos = sum(casos)) 
+
+# Agregando por mesoregioes
+
+casos.meso <- casos.mun.2 |> 
+                # mutate(cod_meso = as.numeric(cod_meso)) |>
+                group_by(nome_meso) |>
+                summarise(casos = sum(casos)) 
+
+```
+
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+# Baixando os mapas
+# uf.sf <- read_state(year=2019)
+# mun.sf <- read_municipality(year=2019)
+# micro.sf <- read_micro_region(year=2019)
+# meso.sf <- read_meso_region(year=2019)
+# save(uf.sf, mun.sf, micro.sf, meso.sf, file = "mapas.RData")
+load("bases/mapas.RData")
+
+# Convertendo as malhas de UTM para Lat Long ####
+uf.longlat <- st_transform(uf.sf, "+proj=longlat +ellps=WGS84 +datum=WGS84")
+mun.longlat <- st_transform(mun.sf, "+proj=longlat +ellps=WGS84 +datum=WGS84")
+micro.longlat <- st_transform(micro.sf, "+proj=longlat +ellps=WGS84 +datum=WGS84")
+meso.longlat <- st_transform(meso.sf, "+proj=longlat +ellps=WGS84 +datum=WGS84")
+
+
+# join the databases
+mun.longlat <- left_join(mun.longlat, casos.mun.2, by = c("code_muni" = "cod_mun")) 
+mun.longlat <- mun.longlat |>  mutate(casos = replace_na(casos, 0))
+
+# Transfromando em minuscula
+micro.longlat$name_micro <- tolower(micro.longlat$name_micro)
+casos.micro$nome_micro <- tolower(casos.micro$nome_micro)
+
+micro.longlat <- left_join(micro.longlat, casos.micro, by = c("name_micro" = "nome_micro"))
+micro.longlat <- micro.longlat |>  mutate(casos = replace_na(casos, 0))
+
+# Transfromando em minuscula
+meso.longlat$name_meso <- tolower(meso.longlat$name_meso)
+casos.meso$nome_meso <- tolower(casos.meso$nome_meso)
+
+meso.longlat <- left_join(meso.longlat, casos.meso, by = c("name_meso" = "nome_meso"))
+meso.longlat <- meso.longlat |>  mutate(casos = replace_na(casos, 0))
+```
+
+---
+
+### Distribuição dos casos de sarampo por Microrregiões
+
+
+```{r, echo=T, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"}
+mytext.micro <- paste("<p>", "UF: ", mun.longlat$name_state, "<p>",
+                "<p>", "Microregião: ", micro.longlat$name_micro, "<p>",
+                "<p>", "Casos: ", micro.longlat$casos, "<p>",
+                 sep="") |>
+          lapply(htmltools::HTML)
+
+# Criando uma espécie de função que criará uma escala de cores em função das classes de valores da variável
+bins.micro <- c(0, 1, 10, 50, 100, 500, 1000, 11000)
+pal.micro <- colorBin("Blues", domain = mun.longlat$casos, bins = bins.micro)
+
+
+
+# greens = colorNumeric("Greens", domain = mun.longlat$casos)
+
+mapa <- leaflet(data = mun.longlat) |> # O básico
+        addTiles() |> # Determinar basemap
+############### Layer das Microregiões ############
+        addPolygons(data= micro.longlat,
+              color = 'grey',
+              weight = 1,
+              smoothFactor = 0.5,
+              fillOpacity = 0.8,
+              fillColor = pal.micro(micro.longlat$casos),
+              label = mytext.micro,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "13px",
+                direction = "auto"),
+                group = "Microregiões") |>
+############## Polígonos das UFs ################
+  addPolygons(data=uf.longlat,
+              color = 'black',
+              weight = 1.5,
+              smoothFactor = 1,
+              fill = FALSE,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "13px",
+                direction = "auto"),
+                group = "UFs") |>
+############### Layer das Mesoregiões ############
+        # addPolygons(data= meso.longlat,
+        #       color = 'grey',
+        #       weight = 1,
+        #       smoothFactor = 0.5,
+        #       fillOpacity = 0.8,
+        #       fillColor = pal.meso(meso.longlat$casos),
+        #       label = mytext.meso,
+        #       labelOptions = labelOptions(
+        #         style = list("font-weight" = "normal", padding = "3px 8px"),
+        #         textsize = "13px",
+        #         direction = "auto"),
+        #         group = "Mesoregiões") |>
+############## Legenda do Mapa Temático ################
+  leaflet::addLegend(pal = pal.micro,
+            title = "Casos de Sarampo",
+            values =  micro.longlat,
+            opacity = 1,
+            position = "topright") |>
+############## Colocando o botão de refazer #####################
+setMaxBounds(lng1 = -70, lat1 = 2, lng2 = -37, lat2 = -36) |>
+  #setView(lng = -46, lat = -25, zoom = 11) |>
+  addEasyButton(easyButton(
+    icon = 'fa-home',
+    title = 'Reset view',
+    onClick =  JS("function(btn, map) {
+       var groupLayer = map.layerManager.getLayerGroup('Casos');
+       map.fitBounds(groupLayer.getBounds());}" )
+  )) |>
+############## Controle das layers ################
+  addLayersControl(
+    # baseGroups = c("tipo1", "Tipo2", "Tipo3"),
+    overlayGroups = c("Microregiões", "UFs"),
+    options = layersControlOptions(collapsed = FALSE),
+    position = "bottomright")
+
+mapa
+
+
+```
+
