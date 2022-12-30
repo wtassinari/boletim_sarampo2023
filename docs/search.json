@@ -6,7 +6,7 @@
       "description": "Some additional details about the website",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2022-12-30T18:44:50-03:00"
+      "last_modified": "2022-12-30T19:01:43-03:00"
     },
     {
       "path": "creditos.html",
@@ -14,7 +14,7 @@
       "description": "Some additional details about the website",
       "author": [],
       "contents": "\nname: “Coordenação: Yara Hökerberg”\nurl: (yarahahr@ini.fiocruz.br)\naffiliation: LABEPICIN/INI/FIOCRUZ\naffiliation_url: https://www.ini.fiocruz.br/labepiclin\nname: “Vice-Coordenação: Raquel Vasconcelos”\nurl: (raquel.vasconcellos@ini.fiocruz.br)\naffiliation: LABEPICIN/INI/FIOCRUZ\naffiliation_url: https://www.ini.fiocruz.br/labepiclin\nname: “Sônia Regina Lambert”\nurl: (sonia.lambert@ini.fiocruz.br)\naffiliation: LABEPICIN/INI/FIOCRUZ\naffiliation_url: https://www.ini.fiocruz.br/labepiclin\nname: “Luan da Silva”\nurl: (snoedasilva@gmail.com)\naffiliation: IFRJ\naffiliation_url:\nname: “Wagner Tassinari”\nurl: (tassinari@ufrrj.br)\naffiliation: DEMAT/ICE/UFRRJ\naffiliation_url: http://www.ice.ufrrj.br/demat/\n\n\n\n",
-      "last_modified": "2022-12-30T18:44:51-03:00"
+      "last_modified": "2022-12-30T19:01:50-03:00"
     },
     {
       "path": "index.html",
@@ -22,15 +22,15 @@
       "description": "Todo o conteúdo deste site faz parte do Projeto PMA INOVA FIOCRUZ 2020, intitulado *Análise geográfica da Cobertura Vacinal e a ocorrência do Sarampo no Brasil, 2000-2019.*\n",
       "author": [],
       "contents": "\n\nSarampo é uma doença altamente contagiosa causada pelo vírus do sarampo (Measles morbillivirus). Os sinais e sintomas iniciais geralmente incluem febre, muitas vezes superior a 40 ºC, tosse, corrimento nasal e olhos inflamados. Dois ou três dias depois do início dos sintomas formam-se no interior da boca pequenos pontos brancos, denominados sinais de Koplik.\n\n\nEntre três a cinco dias depois do início dos sintomas aparece uma mancha vermelha e plana que geralmente tem início na face e daí se espalha para o resto do corpo.\n\n\nOs sintomas começam-se a manifestar entre dez e doze dias depois do contágio e duram entre sete a dez dias. Em cerca de 30% dos casos ocorrem complicações, as quais podem incluir, entre outras, diarreia, cegueira, inflamação do cérebro e pneumonia. A rubéola e a roséola, apesar de causarem sintomas semelhantes aos do sarampo, são causadas por vírus diferentes e apresentam características distintas.\n\n\n\n\nFigure 1: por MArta Bonimond\n\n\n\n\n\n\n",
-      "last_modified": "2022-12-30T18:44:50-03:00"
+      "last_modified": "2022-12-30T19:01:43-03:00"
     },
     {
       "path": "sarampo.html",
       "title": "Sarampo",
-      "description": "Some additional details about the website",
+      "description": "Some additional details about the website\n",
       "author": [],
-      "contents": "\n\n\n\n\n\n\nBase tratada (só casos Sarampo)\n\n\n\nSerie temporal por ano\n\n\nano_epi\n\n\ncasos.sarampo\n\n\n2000\n\n\n138\n\n\n2001\n\n\n62\n\n\n2002\n\n\n25\n\n\n2003\n\n\n12\n\n\n2004\n\n\n0\n\n\n2005\n\n\n16\n\n\n2006\n\n\n57\n\n\n2007\n\n\n26\n\n\n2008\n\n\n14\n\n\n2009\n\n\n4\n\n\n2010\n\n\n73\n\n\n2011\n\n\n48\n\n\n2012\n\n\n5\n\n\n2013\n\n\n211\n\n\n2014\n\n\n816\n\n\n2015\n\n\n184\n\n\n2016\n\n\n4\n\n\n2017\n\n\n4\n\n\n2018\n\n\n9303\n\n\n2019\n\n\n18919\n\n\n2020\n\n\n7145\n\n\n\n\n\nSerie temporal mensal\n\n\n\n\n\n\nBase original (Exantemáticas)\nSerie temporal por ano\n\n\nano_epi\n\n\ncasos.exantematicas\n\n\n2000\n\n\n53775\n\n\n2001\n\n\n45002\n\n\n2002\n\n\n27032\n\n\n2003\n\n\n20635\n\n\n2004\n\n\n18615\n\n\n2005\n\n\n22551\n\n\n2006\n\n\n21484\n\n\n2007\n\n\n41747\n\n\n2008\n\n\n26138\n\n\n2009\n\n\n10767\n\n\n2010\n\n\n10896\n\n\n2011\n\n\n8858\n\n\n2012\n\n\n6072\n\n\n2013\n\n\n6324\n\n\n2014\n\n\n7957\n\n\n2015\n\n\n6780\n\n\n2016\n\n\n2511\n\n\n2017\n\n\n2030\n\n\n2018\n\n\n18354\n\n\n2019\n\n\n68240\n\n\n2020\n\n\n17363\n\n\n\n\n\nSerie temporal mensal\n\n\n\n\n\n\nAnálise Espacial\n\n\n\n\n\n\nDistribuição dos casos de sarampo por Microrregiões\n\n\n",
-      "last_modified": "2022-12-30T18:36:05-03:00"
+      "contents": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBoletim Sarampo\n\n\nIntrodução\nSobre\n\n\nAnálises Estatísticas\n \n▾\n\n\nVacina\nSarampo\n\n\nCréditos\n☰\n\n\n  \n    \n      \n        \n        \n        \n      \n      \n    \n    \n      \n  Introdução\n\n\n  Sobre\n\n\n  \n    Análises Estatísticas\n     \n    \n  \n  \n      Vacina\n    \n    \n      Sarampo\n    \n  \n\n  Créditos\n\n      \n  \n\n\n\n\n\n\nSarampo\n\n\n\n\n\nBase tratada (só casos Sarampo)\n\nSerie temporal por ano\n\nano_epi\n\n\ncasos.sarampo\n\n\n2000\n\n\n138\n\n\n2001\n\n\n62\n\n\n2002\n\n\n25\n\n\n2003\n\n\n12\n\n\n2004\n\n\n0\n\n\n2005\n\n\n16\n\n\n2006\n\n\n57\n\n\n2007\n\n\n26\n\n\n2008\n\n\n14\n\n\n2009\n\n\n4\n\n\n2010\n\n\n73\n\n\n2011\n\n\n48\n\n\n2012\n\n\n5\n\n\n2013\n\n\n211\n\n\n2014\n\n\n816\n\n\n2015\n\n\n184\n\n\n2016\n\n\n4\n\n\n2017\n\n\n4\n\n\n2018\n\n\n9303\n\n\n2019\n\n\n18919\n\n\n2020\n\n\n7145\n\n\n\n\nSerie temporal mensal\n\n\n\n\nBase original (Exantemáticas)\n\nSerie temporal por ano\n\nano_epi\n\n\ncasos.exantematicas\n\n\n2000\n\n\n53775\n\n\n2001\n\n\n45002\n\n\n2002\n\n\n27032\n\n\n2003\n\n\n20635\n\n\n2004\n\n\n18615\n\n\n2005\n\n\n22551\n\n\n2006\n\n\n21484\n\n\n2007\n\n\n41747\n\n\n2008\n\n\n26138\n\n\n2009\n\n\n10767\n\n\n2010\n\n\n10896\n\n\n2011\n\n\n8858\n\n\n2012\n\n\n6072\n\n\n2013\n\n\n6324\n\n\n2014\n\n\n7957\n\n\n2015\n\n\n6780\n\n\n2016\n\n\n2511\n\n\n2017\n\n\n2030\n\n\n2018\n\n\n18354\n\n\n2019\n\n\n68240\n\n\n2020\n\n\n17363\n\n\n\n\nSerie temporal mensal\n\n\n\n\nAnálise Espacial\n\nDistribuição dos casos de sarampo por Microrregiões\n\n",
+      "last_modified": "2022-12-30T19:01:12-03:00"
     }
   ],
   "collections": ["posts/posts.json"]
