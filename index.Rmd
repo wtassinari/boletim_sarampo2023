@@ -2,7 +2,6 @@
 title: "Boletim Eletrônico sobre o Sarampo no Brasil, 2010 - 2020"
 description: |
   Todo o conteúdo deste site faz parte do Projeto PMA INOVA FIOCRUZ 2020, intitulado *Análise geográfica da Cobertura Vacinal e a ocorrência do Sarampo no Brasil, 2000-2019.*
-site: distill::distill_website
 
 ---
 
@@ -21,3 +20,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r pressure, echo=FALSE, fig.cap="por MArta Bonimond", out.width = '100%'}
 knitr::include_graphics("images/tirinha1.png")
 ```
+
+
+<!-- # ```{r, child="sarampo.Rmd"} -->
+<!-- # ``` -->

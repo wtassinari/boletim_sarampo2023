@@ -8,7 +8,8 @@ navbar:
   logo:
     image: images/sarampo1.png
     href: https://bvsms.saude.gov.br/sarampo/
-  search: TRUE
+  search: true
+  source_url: true
   right:
     - text: "Introdução"
       href: index.html
@@ -25,5 +26,10 @@ navbar:
  
     - text: "Créditos"
       href: creditos.html
-      
-output: distill::distill_article
+
+output:
+  distill::distill_article:
+    css: my_theme.css
+    highlight: rstudio
+    toc: true
+
