@@ -1,7 +1,5 @@
 ---
-title: "Sarampo"
-description: |
-   Some additional details about the website
+title: ""
 output:
   distill::distill_article:
     toc: TRUE
@@ -232,7 +230,7 @@ dygraph(casos.st2) |>
 
 ---
 
-## Base original (Exantemáticas)
+## Base original (Só Sarampo)
 
 ### Serie temporal por ano
 
@@ -242,13 +240,15 @@ casos_2000_2007$DT_SIN_PRI2 <- as.Date(casos_2000_2007$DT_SIN_PRI, format="%d/%m
 casos_2000_2007 <- casos_2000_2007 |> mutate(sem_epi = lubridate::epiweek(as.Date(DT_SIN_PRI2)),
                           ano_epi = lubridate::epiyear(as.Date(DT_SIN_PRI2)),
                           data_sem = aweek::get_date(sem_epi, ano_epi, start =7),
-                          mes_ano = yearmonth(DT_SIN_PRI2))
+                          mes_ano = yearmonth(DT_SIN_PRI2)) |> 
+                    dplyr::filter(CS_RESULT_ == 1) # So confirmacao de sarampo
 
 casos_2007_2020$DT_SIN_PRI2 <- as.Date(casos_2007_2020$DT_SIN_PRI, format="%d/%m/%Y")
 casos_2007_2020 <- casos_2007_2020 |> mutate(sem_epi = lubridate::epiweek(as.Date(DT_SIN_PRI2)),
                           ano_epi = lubridate::epiyear(as.Date(DT_SIN_PRI2)),
                           data_sem = aweek::get_date(sem_epi, ano_epi, start =7),
-                          mes_ano = yearmonth(DT_SIN_PRI2))
+                          mes_ano = yearmonth(DT_SIN_PRI2)) |> 
+                   dplyr::filter(CLASSI_FIN == 1) # So confirmacao de sarampo
 
 casos_2000_2007p <- casos_2000_2007 |> select(mes_ano, ano_epi)
 casos_2007_2020p <- casos_2007_2020 |> select(mes_ano, ano_epi)
@@ -288,7 +288,7 @@ casos.st.orig.ano |>
 
 p <- ggplot(casos.st.orig.ano, aes(x=ano_epi, y=casos.exantematicas)) + 
      geom_bar(stat = "identity") +
-     xlab("Anos") +  ylab("Casos Exantemáticas") +
+     xlab("Anos") +  ylab("Casos Sarampo (base original)") +
      theme_minimal()
 
 ggplotly(p)
@@ -303,12 +303,12 @@ ggplotly(p)
 
 casos.orig.st <- casos.orig |> 
            group_by(mes_ano) |>
-           count(name="casos.exantematicas") 
+           count(name="casos.sarampo") 
 
 casos.orig.st <- mes_tabela |>
            left_join(casos.orig.st, by="mes_ano") |>
-            mutate(casos.exantematicas = ifelse(is.na(casos.exantematicas), 0, casos.exantematicas)) |>
-            dplyr::select(mes_ano, casos.exantematicas)
+            mutate(casos.sarampo = ifelse(is.na(casos.sarampo), 0, casos.sarampo)) |>
+            dplyr::select(mes_ano, casos.sarampo)
 ```
 
 ---
@@ -316,13 +316,13 @@ casos.orig.st <- mes_tabela |>
 ```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 3, fig.width = 8}
 
 
-casos.orig.st2 <- ts(casos.orig.st$casos.exantematicas, start=c(2000, 1), end=c(2021, 1), frequency=12)
+casos.orig.st2 <- ts(casos.orig.st$casos.sarampo, start=c(2000, 1), end=c(2021, 1), frequency=12)
 
 dygraph(casos.orig.st2) |> 
-            dySeries("V1", label = "Casos de Exantematicas") |>
+            dySeries("V1", label = "Casos de Sarampo (original)") |>
             dyOptions(stackedGraph = TRUE) |>
                        dyRangeSelector(height = 20) |> 
-                       dyAxis("y", label = "Casos de Exantematicas") |> 
+                       dyAxis("y", label = "Casos de Sarampo (original)") |> 
                        dyUnzoom() 
 
 ```
@@ -331,7 +331,7 @@ dygraph(casos.orig.st2) |>
 
 ## Análise Espacial
 
-```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"}
 # Agregando os casos de sarampo por município de residencia
 
 casos.mun <- casos |> 
