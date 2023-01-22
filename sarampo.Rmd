@@ -425,7 +425,7 @@ mytext.micro <- paste("<p>", "UF: ",  micro.longlat$name_state, "<p>",
 
 # Criando uma espécie de função que criará uma escala de cores em função das classes de valores da variável
 bins.micro <- c(0, 1, 5, 10, 50, 100, 400)
-pal.micro <- colorBin("Blues", domain = mun.longlat$incid, bins = bins.micro)
+pal.micro <- colorBin("Blues", domain = micro.longlat$incid, bins = bins.micro)
 
 
 
