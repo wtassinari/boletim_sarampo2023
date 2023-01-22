@@ -51,3 +51,9 @@ html {
   --heading-size:    18px;
   --contents-size:   13px;
 }
+
+/* Cor de fundo */ 
+/* https://developer.mozilla.org/pt-BR/docs/Web/CSS/color_value*/ 
+body {
+  background-color: #F8F8FF;
+}
