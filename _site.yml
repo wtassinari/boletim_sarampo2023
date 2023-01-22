@@ -13,11 +13,15 @@ navbar:
   right:
     - text: "Introdução"
       href: index.html
-      
+    
     - text: "Sobre"
-      href: about.html
-      
-    - text: "Análises Estatísticas"
+      menu:
+        - text: "Sobre o Sarampo"
+          href: sobre_sarampo.html
+        - text: "O que é a vacina Tríplice Viral ?"
+          href: sobre_vacina.html
+          
+    - text: "Dados"
       menu:
         - text: "Vacina"
           href: vacina.html

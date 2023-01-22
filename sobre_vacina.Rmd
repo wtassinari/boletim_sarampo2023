@@ -1,0 +1,44 @@
+---
+title: "O que é a Vacina Tríplice Viral"
+description: |
+  A tríplice viral é uma vacina atenuada, que contém vírus vivos “enfraquecidos” do sarampo, da rubéola e da caxumba, aminoácidos, albumina humana, sulfato de neomicina, sorbitol, gelatina e traços de proteína do ovo de galinha usado no processo de fabricação da vacina.
+  **Previne das doenças:** Rubéola, sarampo e caxumba.
+---
+
+### Indicações
+
+A vacina é indicada a partir de 12 meses de idade. Uma segunda dose deve ser aplicada entre 2 e 4 anos de idade. Adolescentes não vacinados devem receber duas doses. Adultos, em viagem para o exterior, sem registro de vacinação, devem ser vacinados.
+
+
+### Esquema de doses
+
+- Para crianças, a Sociedade Brasileira de Pediatria (SBP) e a Sociedade Brasileira de Imunizações (SBIm) recomendam como rotina duas doses: uma aos 12 meses e a segunda quando a criança tiver entre 1 ano e 3 meses e 2 anos de idade, junto com a vacina varicela, podendo ser usadas as vacinas separadas (SCR e varicela) ou a combinada (tetraviral: SCR-V).
+
+- Crianças mais velhas, adolescentes e adultos não vacinados ou sem comprovação de doses aplicadas: duas doses com intervalo de um a dois meses.
+
+### Contraindicações
+
+- Anafilaxia aos componentes da vacina (inclusive neomicina e gelatina)
+
+- Gestação
+
+- Imunodeprimidos; uso de corticosteroides por via oral ou parenteral, por mais de duas semanas em doses correspondentes a 2mg/kg/dia ou 20mg/dia de prednisona
+
+- Doenças febris agudas
+
+- Pessoas submetidas a tratamento com derivados do sangue (consultar equipe técnica), quimioterapia e radioterapia nos últimos 3 meses. Após transplante de medula óssea deve-se aguardar de 1 a 2 anos para aplicação da vacina.
+
+- É recomendado evitar-se gestação por 30 dias após a aplicação. A vacinação no mesmo dia com a vacina contra a febre amarela e/ou com a vacina da Varicela deve ser evitada em crianças, intervalando no mínimo 30 dias. Pode ser aplicada simultaneamente a qualquer outra vacina.
+
+
+### Eventos Adversos
+
+- Febre alta (maior que 39,5⁰C), que surge de cinco a 12 dias após a vacinação, com um a cinco dias de duração, pode ocorrer em 5% a 15% dos vacinados.
+
+- Em até 4% dos vacinados também pode ocorrer dor de cabeça, irritabilidade, febre baixa, lacrimejamento e vermelhidão dos olhos e coriza.
+
+- Manchas vermelhas no corpo,  surgem em 5% dos vacinados.
+
+- Manifestações hemorrágicas (púrpura trombocitopênica) foi descrita na proporção de um caso para 30 mil a 40 mil vacinados, com evolução benigna entre 12 a 25 dias após a vacinação. Contudo, essa ocorrência contraindica outras doses da vacina tríplice viral.
+
+- Dor articular ou artrite surge em 25% das mulheres após a puberdade, de um a 21 dias depois da vacinação. Essa reação é transitória, benigna e não contraindica outras doses da vacina.

@@ -1,0 +1,270 @@
+---
+title: "Alguns dados sobre a Vacinação"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+if(!require(pacman)) install.packages("pacman")
+library(pacman)
+
+pacman::p_load(plotly, ggmap, foreign, haven, readxl, dplyr, questionr, tidyr, ggplot2, gridExtra,
+               hrbrthemes, ggridges, viridis, knitr, kableExtra, 
+               summarytools, reshape, wesanderson, plyr, ggstatsplot, epiR,
+               zoo, questionr, lubridate, stringi, geobr, RgoogleMaps, 
+               sp, tmap, sf, devtools, geobr)
+```
+
+
+
+```{r}
+# lendo o arquivo com a cobertura or regioes
+banco0 <- read.csv('bases/cobvac_porregiao.csv',sep=';',dec=',')
+
+regiao.map <- read_region(year=2018, showProgress = F)   # region
+
+```
+
+### Distribuição temporal da cobertura Vacinal da tríplice viral, Brasil e Regiões - 2000 a 2020.
+
+
+```{r, fig.align='center', fig.width=12, fig.height=4.5, cache=FALSE, echo=FALSE}
+
+g1 <- ggplot(data=banco0,mapping= aes(x=ano,y=cobertura))+
+  geom_line(mapping=aes(color=regiao), size=0.9)+
+   labs(x= "ano",
+        y="Cobertura vacinal (%)",
+        title="")+
+   geom_hline(yintercept=c(95),linetype="dotted",
+              color = "red", size=0.3)+
+   scale_x_continuous(breaks=c(2000:2020))+
+   theme_classic()+
+   scale_y_continuous(breaks=c(75,100,120))+
+   scale_color_discrete(name="") +
+  annotate("text", x = 2000, y = 93, label = "95%") +
+  theme(axis.text.x = element_text(size = 8, angle=45))   
+
+ggplotly(g1)
+
+
+```
+
+
+
+```{r}
+banco1 <- subset(banco0, regiao != "Brasil")
+banco2000 <- subset(banco1, ano==2000)
+banco2001 <- subset(banco1, ano==2001)
+banco2002 <- subset(banco1, ano==2002)
+banco2003 <- subset(banco1, ano==2003)
+banco2004 <- subset(banco1, ano==2004)
+
+banco2000a2004 <- banco2000 %>%
+  mutate(cobertura2000a2004 = (banco2000$cobertura + banco2001$cobertura + banco2002$cobertura + banco2003$cobertura +        banco2004$cobertura)/5,
+         Ano = "2000 a 2004",
+         code_region = case_when(
+           regiao == "Norte" ~ 1,
+           regiao == "Nordeste" ~ 2,
+           regiao == "Sudeste" ~ 3,
+           regiao == "Sul" ~ 4,
+           regiao == "Centro oeste" ~ 5,),
+         code_region = as.factor(code_region))
+
+banco2005 <- subset(banco1, ano==2005)
+banco2006 <- subset(banco1, ano==2006)
+banco2007 <- subset(banco1, ano==2007)
+banco2008 <- subset(banco1, ano==2008)
+banco2009 <- subset(banco1, ano==2009)
+
+banco2005a2009 <- banco2000 %>%
+  mutate(cobertura2005a2009 = (banco2005$cobertura + banco2006$cobertura + banco2007$cobertura + banco2008$cobertura +        banco2009$cobertura)/5,
+         Ano = "2005 a 2009",
+         code_region = case_when(
+           regiao == "Norte" ~ 1,
+           regiao == "Nordeste" ~ 2,
+           regiao == "Sudeste" ~ 3,
+           regiao == "Sul" ~ 4,
+           regiao == "Centro oeste" ~ 5,),
+         code_region = as.factor(code_region))
+
+banco2010 <- subset(banco1, ano==2010)
+banco2011 <- subset(banco1, ano==2011)
+banco2012 <- subset(banco1, ano==2012)
+banco2013 <- subset(banco1, ano==2013)
+banco2014 <- subset(banco1, ano==2014)
+
+banco2010a2014 <- banco2000 %>%
+  mutate(cobertura2010a2014 = (banco2010$cobertura + banco2011$cobertura + banco2012$cobertura + banco2013$cobertura +        banco2014$cobertura)/5,
+         Ano = "2010 a 2014",
+         code_region = case_when(
+           regiao == "Norte" ~ 1,
+           regiao == "Nordeste" ~ 2,
+           regiao == "Sudeste" ~ 3,
+           regiao == "Sul" ~ 4,
+           regiao == "Centro oeste" ~ 5,),
+         code_region = as.factor(code_region))
+
+banco2015 <- subset(banco1, ano==2015)
+banco2016 <- subset(banco1, ano==2016)
+banco2017 <- subset(banco1, ano==2016)
+banco2018 <- subset(banco1, ano==2018)
+banco2019 <- subset(banco1, ano==2019)
+banco2020 <- subset(banco1, ano==2020)
+
+banco2015a2020 <- banco2000 %>%
+  mutate(cobertura2015a2020 = (banco2015$cobertura + banco2016$cobertura + banco2017$cobertura + banco2018$cobertura +        banco2019$cobertura + banco2020$cobertura)/6,
+         Ano = "2015 a 2020",
+         code_region = case_when(
+           regiao == "Norte" ~ 1,
+           regiao == "Nordeste" ~ 2,
+           regiao == "Sudeste" ~ 3,
+           regiao == "Sul" ~ 4,
+           regiao == "Centro oeste" ~ 5,),
+         code_region = as.factor(code_region))
+```
+
+### Distribuição da cobertura Vacinal da tríplice viral, Brasil e Regiões - 2000 a 2020.
+
+```{r, fig.align='center', fig.width=12, fig.height=4.5, cache=FALSE, echo=FALSE}
+g2 <- banco0 %>%
+  ggplot(aes(y = cobertura, x = as.factor(ano))) + 
+    geom_violin(aes(fill = as.factor(ano)),  
+                 binaxis = "y",         
+                 binwidth = 0.1,       
+                 stackdir = "center"   
+                 ) +
+  geom_hline(yintercept=c(95),linetype="dotted",
+             color = "red", size=0.3) +
+  annotate("text", x = "2000", y = 93, label = "95%", col="red") +
+    stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 1) +
+       ylab("Cobertura (%)") + xlab("Anos") +
+       theme(axis.text.x = element_text(size = 8, angle=45))
+   # ggtitle("Distribuição da cobertura Vacinal da tríplice viral entre o Brasil e Regiões - 2000 a 2020") 
+
+ggplotly(g2)
+```
+
+### Distribuição da cobertura Vacinal da tríplice viral entre o Brasil e Regiões - 2000 a 2020.
+
+```{r, fig.align='center', fig.width=12, fig.height=6, cache=FALSE, echo=FALSE}
+g3 <- banco0 %>%
+  ggplot(aes(x=regiao, y=cobertura, fill=regiao)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+  geom_hline(yintercept=c(95),linetype="dotted",
+             color = "red", size=0.3) +
+  annotate("text", x = "Brasil", y = 93, label = "95%", col="red") +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=11)
+    ) +
+   # ggtitle("Distribuição da cobertura Vacinal da tríplice viral entre o Brasil e Regiões - 2000 a 2020") +
+    ylab("Cobertura (%)") + xlab("Regiões") 
+
+ggplotly(g3)
+
+```
+
+
+### Distribuição Geográfica da cobertura vacinal pelo Brasil por grandes regiões por triênios 2000 a 2020.
+
+
+<!-- ```{r} -->
+<!-- regiao.map$code_region <- as.factor(regiao.map$code_region) -->
+
+<!-- # Fazendo o merge entre a media da cobertura e a malha -->
+<!-- regiao.map2000a2004 <- merge(banco2000a2004, regiao.map, by="code_region")   -->
+<!-- regiao.map2005a2009 <- merge(banco2005a2009, regiao.map, by="code_region")  -->
+<!-- regiao.map2010a2014 <- merge(banco2010a2014, regiao.map, by="code_region")   -->
+<!-- regiao.map2015a2020 <- merge(banco2015a2020, regiao.map, by="code_region")   -->
+
+<!-- st_geometry(regiao.map2000a2004) <- st_geometry(regiao.map) -->
+<!-- st_geometry(regiao.map2005a2009) <- st_geometry(regiao.map) -->
+<!-- st_geometry(regiao.map2015a2020) <- st_geometry(regiao.map) -->
+<!-- st_geometry(regiao.map2010a2014) <- st_geometry(regiao.map) -->
+
+
+<!-- library(wesanderson) -->
+<!-- pal <- wes_palette("Zissou1", 50, type = "continuous") -->
+
+<!-- map1 <- tm_shape(regiao.map2000a2004) + -->
+<!--   tm_polygons(col='cobertura', title="Cobertura (%)", breaks=c(75, 85, 95, 110), border.col = "white",  -->
+<!--               palette="Oranges", popup.vars = c("cobertura"),  title.col = "Cobertura") + -->
+<!--               tmap_mode("view") -->
+
+<!-- map2 <- tm_shape(regiao.map2005a2009) + -->
+<!--   tm_polygons(col='cobertura', title="Cobertura (%)", breaks=c(75, 85, 95, 110), border.col = "white",  -->
+<!--               palette="Oranges", popup.vars = c("cobertura"),  title.col = "Cobertura") + -->
+<!--               tmap_mode("view") -->
+
+<!-- map3 <- tm_shape(regiao.map2010a2014) + -->
+<!--   tm_polygons(col='cobertura', title="Cobertura (%)", breaks=c(75, 85, 95, 110), border.col = "white",  -->
+<!--               palette="Oranges", popup.vars = c("cobertura"),  title.col = "Cobertura")+ -->
+<!--               tmap_mode("view") -->
+
+<!-- map4 <- tm_shape(regiao.map2015a2020) + -->
+<!--   tm_polygons(col='cobertura', title="Cobertura (%)", breaks=c(75, 85, 95, 110), border.col = "white",  -->
+<!--               palette="Oranges", popup.vars = c("cobertura"),  title.col = "Cobertura") + -->
+<!--               tmap_mode("view") -->
+
+<!-- tmap_arrange(map1, map2, map3, map4) -->
+<!-- ``` -->
+
+
+```{r, fig.align='center', fig.width=8, fig.height=7.5, cache=FALSE, echo=FALSE}
+# Baixando a malha das regioes
+
+regiao.map$code_region <- as.factor(regiao.map$code_region)
+
+banco2000a2020 <- cbind(banco2000a2004, banco2005a2009, banco2010a2014, banco2015a2020)
+banco2000a2020 <- banco2000a2020 %>% select(cobertura2000a2004, cobertura2005a2009, cobertura2010a2014, cobertura2015a2020) %>%
+  mutate(code_region = c("1","2","3","4","5"))
+
+regiao.map2000a2020 <- merge(banco2000a2020, regiao.map, by="code_region") 
+
+st_geometry(regiao.map2000a2020) <- st_geometry(regiao.map)
+
+library(wesanderson)
+pal <- wes_palette("Zissou1", 50, type = "continuous")
+
+tmap_mode("view");
+tm_shape(regiao.map2000a2020) +
+  tm_polygons(col=c("cobertura2000a2004", "cobertura2005a2009", "cobertura2010a2014", "cobertura2015a2020"),
+              breaks=c(85, 90, 95, 100, 105, 110, 115), border.col = "white", palette="Oranges",
+              title.col = "name_region") +
+  tm_facets(as.layers = TRUE)
+
+# tm_shape(regiao.map2000a2020) +
+#   tm_polygons(col=c("cobertura2000a2004", "cobertura2005a2009", "cobertura2010a2014", "cobertura2015a2020"), breaks=c(75, 85, 95, 110), border.col = "white", palette="Oranges") +
+#     tm_facets(sync = TRUE, ncol = 2, nrow = 2) 
+ 
+
+```
+
+### IDH + Pop + Cobertura
+
+```{r, fig.align='center', fig.width=12, fig.height=6, cache=FALSE, echo=FALSE}
+code_region <- c(1,2,3,4,5)
+pop2010 <- c(15864454,	53081950,	80364410,	27386891,	12482963)
+IDH <- c(0.667, 0.663, 0.766, 0.754, 0.757)
+pop.idh2010 <- data_frame(code_region, pop2010, IDH)
+
+pop.idh2010 <- merge(banco2015a2020, pop.idh2010, by="code_region") 
+
+g5 <- ggplot(pop.idh2010, aes(x=IDH, y=cobertura2015a2020, size=pop2010, fill=regiao)) +
+    geom_point(alpha=0.7, shape=21,  color="black") +
+    scale_size(range = c(3, 12), name="População 2010") +
+    scale_fill_viridis(discrete=TRUE, guide=FALSE, option="A") +
+    ylim(85, 100) + 
+    xlim(0.65, 0.8) + 
+    theme_ipsum() +
+  #  theme(legend.position="bottom") +
+    ylab("Cobertura Vacinal 2015 a 2020 (%)") +
+    xlab("IDH") 
+  # theme(legend.position="none")
+
+ggplotly(g5)
+
+```
