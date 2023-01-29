@@ -27,6 +27,8 @@ navbar:
           href: vacina.html
         - text: "Sarampo"
           href: sarampo.html
+        - text: "Modelagem"
+          href: modelagem.html
  
     - text: "Créditos"
       href: creditos.html

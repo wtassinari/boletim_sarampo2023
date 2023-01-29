@@ -41,14 +41,28 @@ munic <- munic |>
 pop2021 <- read_delim("bases/pop_mun_est_2021.csv",  delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 # Concatenando as colunas cod uf + cod mun
-
 pop2021 <- pop2021 |> rename_at(vars("UF", "COD. UF", "COD. MUNIC",                    "NOME DO MUNICÍPIO", "POPULAÇÃO ESTIMADA"), 
           ~ c("uf", "cod_uf", "cod_mun", "nome_mun", "pop2021")) |>
             mutate(cod_mun = paste(cod_uf, cod_mun, sep= "")) |>
             select(cod_mun, pop2021)
 
+# Cobertura vacinal
+cob <- read_excel("bases/cob2014_2020.xlsx")
+cob$cod_mun2 <- substr(cob$mun,1,6)
+cob <- cob |> 
+       select(cod_mun2, cob_total, cob_mediana)
 
-  
+# Alguns indicadores 
+# http://ivs.ipea.gov.br/index.php/pt/planilha
+ivs <- read_excel("bases/IVS_2010.xlsx")
+ivs <- ivs |> filter(ano == 2010) |>
+       select(cod_mun2, ivs, idhm, mort5, analf18, gini) |>
+       mutate(ivs = as.numeric(ivs), 
+              idhm = as.numeric(idhm),
+              mort5 = as.numeric(mort5), 
+              analf18 = as.numeric(analf18), 
+              gini = as.numeric(gini))
+
 ### Dados originais
 
 # casos_2000_2007 <- read_delim("Bases originais/exant Sinan_ano_ 2000_2007.csv", 
@@ -348,23 +362,35 @@ casos.mun <- casos |>
 # casos.mun.6 <- casos.mun |> 
 #               filter(grupo == 6)
 
-
+# Fazendo o join com a população
 casos.mun.2 <- munic |>
                    left_join(casos.mun, by="cod_mun2") |>
                    mutate(casos = replace_na(casos, 0)) |>
                    left_join(pop2021, by="cod_mun") |>
                    mutate(cod_mun = as.numeric(cod_mun),
                           incid = (casos/pop2021)*100000) # incidencia por 100mil))
-                          
-                 
+
+# Fazendo o join com a cobertura vacinal   
+casos.mun.3 <- casos.mun.2 |>
+                   left_join(cob, by="cod_mun2") 
+
+# Fazendo o join com os indicadores   
+casos.mun.4 <- casos.mun.3 |>
+                   left_join(ivs, by="cod_mun2") 
 
 # Agregando por microregioes
-
-casos.micro <- casos.mun.2 |> 
+casos.micro <- casos.mun.4 |> 
                 # mutate(cod_micro = as.factor(cod_micro)) |>
                 group_by(nome_micro) |>
                 summarise(casos = sum(casos),
-                          pop2021 = sum(pop2021)) |>
+                          pop2021 = sum(pop2021),
+                          cob_total = median(cob_total, na.rm=T),
+                          cob_mediana = median(cob_mediana, na.rm=T),
+                          ivs = median(ivs, na.rm=T), 
+                          idhm = median(idhm, na.rm=T),
+                          mort5 = median(mort5, na.rm=T),
+                          analf18 = median(analf18, na.rm=T),
+                          gini = median(gini, na.rm=T)) |>
                 mutate(incid = (casos/pop2021)*100000)  |> # incidencia por 100mil)  
                 mutate(incid = replace_na(incid, 0))
 
@@ -412,6 +438,8 @@ micro.longlat <- micro.longlat |>  mutate(casos = replace_na(casos, 0),
 # 
 # meso.longlat <- left_join(meso.longlat, casos.meso, by = c("name_meso" = "nome_meso"))
 # meso.longlat <- meso.longlat |>  mutate(casos = replace_na(casos, 0))
+
+save.image("sarampo.RData")
 ```
 
 ### Distribuição da incidência acumulada (por 100 mil ha) dos casos de sarampo por Microrregiões, 2014-2020.

@@ -1,0 +1,44 @@
+---
+title: "Algumas análises Sarampo vs Vacina"
+---
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="80%"}
+# Caso não o pacote pacman não esteja instalado
+if(!require(pacman)) install.packages("pacman")
+
+# Lendo as bibliotecas 
+pacman::p_load(readxl, tidyverse, ggplot2, dplyr, kableExtra, plotly, DT,
+               sf, sp, maptools, colorspace, rgdal, spatstat, MASS, raster, 
+               hrbrthemes, zoo, lubridate, leaflet, ggmap, htmltools, 
+               leaflet.extras, dygraphs, xts, ggthemes, gtsummary, viridis, 
+               leafpop, gridExtra, echarts4r, ggfortify, mgcv, tmap, tmapools,
+               githubinstall, EpiWeek, tsibble, aweek, plotly, geobr, readr, psych)
+
+# Desligando a notação científica no R
+options(scipen=999)
+
+load("sarampo.RData")
+```
+
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+corr.indicadores <- casos.micro |>
+   dplyr::select(casos, incid, cob_mediana, ivs, idhm, mort5, analf18, gini)
+
+# Correlaçao com indicadorers 
+pairs.panels(corr.indicadores,
+             smooth = TRUE,      # If TRUE, draws loess smooths
+             scale = FALSE,      # If TRUE, scales the correlation text font
+             density = TRUE,     # If TRUE, adds density plots and histograms
+             ellipses = TRUE,    # If TRUE, draws ellipses
+             method = "spearman", # Correlation method (also "spearman" or "kendall")
+             pch = 21,           # pch symbol
+             lm = FALSE,         # If TRUE, plots linear fit rather than the LOESS (smoothed) fit
+             cor = TRUE,         # If TRUE, reports correlations
+             jiggle = FALSE,     # If TRUE, data points are jittered
+             factor = 2,         # Jittering factor
+             hist.col = 4,       # Histograms color
+             stars = TRUE,       # If TRUE, adds significance level with stars
+             ci = TRUE)          # If TRUE, adds confidence intervals
+```
+
