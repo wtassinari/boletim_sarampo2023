@@ -20,6 +20,7 @@ options(scipen=999)
 load("sarampo.RData")
 ```
 
+## Análise da correlação de indicadores sociais e de saúde com os casos de sarampo.
 
 ```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
 corr.indicadores <- casos.micro |>
@@ -27,7 +28,7 @@ corr.indicadores <- casos.micro |>
 
 # Correlaçao com indicadorers 
 pairs.panels(corr.indicadores,
-             smooth = TRUE,      # If TRUE, draws loess smooths
+             smooth = FALSE,      # If TRUE, draws loess smooths
              scale = FALSE,      # If TRUE, scales the correlation text font
              density = TRUE,     # If TRUE, adds density plots and histograms
              ellipses = TRUE,    # If TRUE, draws ellipses
