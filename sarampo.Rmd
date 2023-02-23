@@ -444,7 +444,7 @@ save.image("sarampo.RData")
 
 ### Distribuição da incidência acumulada (por 100 mil ha) dos casos de sarampo entre as Microrregiões Brasileiras, 2014-2020.
 
-```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height =5, fig.width = 12}
 
 library(tidyverse)
 library(hrbrthemes)
