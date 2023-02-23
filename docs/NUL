@@ -1,0 +1,251 @@
+
+Number of Observations: 560
+Kernel: Adaptive
+Neightbours: 200
+Number of Variables: 6
+--------------- Global Model Summary ---------------
+
+Call:
+glm(formula = casos ~ offset(log(pop2021)) + cob_mediana + ivs + 
+    idhm + mort5 + analf18 + gini, family = "poisson", data = micro.sp)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-65.974   -3.865   -2.104   -0.604   87.007  
+
+Coefficients:
+               Estimate  Std. Error z value             Pr(>|z|)    
+(Intercept) -12.8166906   0.2021918  -63.39 < 0.0000000000000002 ***
+cob_mediana  -0.0050114   0.0007138   -7.02     0.00000000000221 ***
+ivs          18.7324623   0.1358789  137.86 < 0.0000000000000002 ***
+idhm          6.0772827   0.2021686   30.06 < 0.0000000000000002 ***
+mort5        -0.2308474   0.0029866  -77.29 < 0.0000000000000002 ***
+analf18      -0.0841995   0.0019184  -43.89 < 0.0000000000000002 ***
+gini         -2.7087998   0.1622561  -16.70 < 0.0000000000000002 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 99732  on 557  degrees of freedom
+Residual deviance: 49628  on 551  degrees of freedom
+  (2 observations deleted due to missingness)
+AIC: 50811
+
+Number of Fisher Scoring iterations: 7
+
+
+Residual Sum of Squares: 84526843
+R-squared: 0.5390044
+Adjusted R-squared: 0.5331585
+--------------- Local Model Summary ---------------
+
+Residuals:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+     NA      NA      NA     NaN      NA      NA     560 
+
+Coefficients:
+
+Residual Sum of Squares: NA
+R-squared: NA
+Adjusted R-squared: NA
+Number of Observations: 560
+Kernel: Adaptive
+Neightbours: 200
+Number of Variables: 6
+--------------- Global Model Summary ---------------
+
+Call:
+glm(formula = casos ~ offset(log(pop2021)) + cob_mediana + ivs + 
+    idhm + mort5 + analf18 + gini, family = "poisson", data = micro.sp)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-65.974   -3.865   -2.104   -0.604   87.007  
+
+Coefficients:
+               Estimate  Std. Error z value             Pr(>|z|)    
+(Intercept) -12.8166906   0.2021918  -63.39 < 0.0000000000000002 ***
+cob_mediana  -0.0050114   0.0007138   -7.02     0.00000000000221 ***
+ivs          18.7324623   0.1358789  137.86 < 0.0000000000000002 ***
+idhm          6.0772827   0.2021686   30.06 < 0.0000000000000002 ***
+mort5        -0.2308474   0.0029866  -77.29 < 0.0000000000000002 ***
+analf18      -0.0841995   0.0019184  -43.89 < 0.0000000000000002 ***
+gini         -2.7087998   0.1622561  -16.70 < 0.0000000000000002 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 99732  on 557  degrees of freedom
+Residual deviance: 49628  on 551  degrees of freedom
+  (2 observations deleted due to missingness)
+AIC: 50811
+
+Number of Fisher Scoring iterations: 7
+
+
+Residual Sum of Squares: 84526843
+R-squared: 0.5390044
+Adjusted R-squared: 0.5331585
+--------------- Local Model Summary ---------------
+
+Residuals:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+     NA      NA      NA     NaN      NA      NA     560 
+
+Coefficients:
+
+Residual Sum of Squares: NA
+R-squared: NA
+Adjusted R-squared: NA
+Number of Observations: 560
+Kernel: Adaptive
+Neightbours: 200
+Number of Variables: 6
+--------------- Global Model Summary ---------------
+
+Call:
+glm(formula = casos ~ offset(log(pop2021)) + cob_mediana + ivs + 
+    idhm + mort5 + analf18 + gini, family = "poisson", data = micro.sp)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-65.974   -3.865   -2.104   -0.604   87.007  
+
+Coefficients:
+               Estimate  Std. Error z value             Pr(>|z|)    
+(Intercept) -12.8166906   0.2021918  -63.39 < 0.0000000000000002 ***
+cob_mediana  -0.0050114   0.0007138   -7.02     0.00000000000221 ***
+ivs          18.7324623   0.1358789  137.86 < 0.0000000000000002 ***
+idhm          6.0772827   0.2021686   30.06 < 0.0000000000000002 ***
+mort5        -0.2308474   0.0029866  -77.29 < 0.0000000000000002 ***
+analf18      -0.0841995   0.0019184  -43.89 < 0.0000000000000002 ***
+gini         -2.7087998   0.1622561  -16.70 < 0.0000000000000002 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 99732  on 557  degrees of freedom
+Residual deviance: 49628  on 551  degrees of freedom
+  (2 observations deleted due to missingness)
+AIC: 50811
+
+Number of Fisher Scoring iterations: 7
+
+
+Residual Sum of Squares: 84526843
+R-squared: 0.5390044
+Adjusted R-squared: 0.5331585
+--------------- Local Model Summary ---------------
+
+Residuals:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+     NA      NA      NA     NaN      NA      NA     560 
+
+Coefficients:
+
+Residual Sum of Squares: NA
+R-squared: NA
+Adjusted R-squared: NA
+Number of Observations: 560
+Kernel: Adaptive
+Neightbours: 200
+Number of Variables: 6
+--------------- Global Model Summary ---------------
+
+Call:
+glm(formula = casos ~ offset(log(pop2021)) + cob_mediana + ivs + 
+    idhm + mort5 + analf18 + gini, family = "poisson", data = micro.sp)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-65.974   -3.865   -2.104   -0.604   87.007  
+
+Coefficients:
+               Estimate  Std. Error z value             Pr(>|z|)    
+(Intercept) -12.8166906   0.2021918  -63.39 < 0.0000000000000002 ***
+cob_mediana  -0.0050114   0.0007138   -7.02     0.00000000000221 ***
+ivs          18.7324623   0.1358789  137.86 < 0.0000000000000002 ***
+idhm          6.0772827   0.2021686   30.06 < 0.0000000000000002 ***
+mort5        -0.2308474   0.0029866  -77.29 < 0.0000000000000002 ***
+analf18      -0.0841995   0.0019184  -43.89 < 0.0000000000000002 ***
+gini         -2.7087998   0.1622561  -16.70 < 0.0000000000000002 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 99732  on 557  degrees of freedom
+Residual deviance: 49628  on 551  degrees of freedom
+  (2 observations deleted due to missingness)
+AIC: 50811
+
+Number of Fisher Scoring iterations: 7
+
+
+Residual Sum of Squares: 84526843
+R-squared: 0.5390044
+Adjusted R-squared: 0.5331585
+--------------- Local Model Summary ---------------
+
+Residuals:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+     NA      NA      NA     NaN      NA      NA     560 
+
+Coefficients:
+
+Residual Sum of Squares: NA
+R-squared: NA
+Adjusted R-squared: NA
+Number of Observations: 560
+Kernel: Adaptive
+Neightbours: 200
+Number of Variables: 6
+--------------- Global Model Summary ---------------
+
+Call:
+glm(formula = casos ~ offset(log(pop2021)) + cob_mediana + ivs + 
+    idhm + mort5 + analf18 + gini, family = "poisson", data = micro.sp)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-65.974   -3.865   -2.104   -0.604   87.007  
+
+Coefficients:
+               Estimate  Std. Error z value             Pr(>|z|)    
+(Intercept) -12.8166906   0.2021918  -63.39 < 0.0000000000000002 ***
+cob_mediana  -0.0050114   0.0007138   -7.02     0.00000000000221 ***
+ivs          18.7324623   0.1358789  137.86 < 0.0000000000000002 ***
+idhm          6.0772827   0.2021686   30.06 < 0.0000000000000002 ***
+mort5        -0.2308474   0.0029866  -77.29 < 0.0000000000000002 ***
+analf18      -0.0841995   0.0019184  -43.89 < 0.0000000000000002 ***
+gini         -2.7087998   0.1622561  -16.70 < 0.0000000000000002 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 99732  on 557  degrees of freedom
+Residual deviance: 49628  on 551  degrees of freedom
+  (2 observations deleted due to missingness)
+AIC: 50811
+
+Number of Fisher Scoring iterations: 7
+
+
+Residual Sum of Squares: 84526843
+R-squared: 0.5390044
+Adjusted R-squared: 0.5331585
+--------------- Local Model Summary ---------------
+
+Residuals:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+     NA      NA      NA     NaN      NA      NA     560 
+
+Coefficients:
+
+Residual Sum of Squares: NA
+R-squared: NA
+Adjusted R-squared: NA

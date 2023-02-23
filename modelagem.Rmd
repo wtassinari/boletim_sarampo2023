@@ -156,7 +156,8 @@ micro.utm.data$id <- 1:nrow(micro.utm.data)
 micro.utm.data2 <- micro.utm.data |>
                  select(code_micro, quad_sig, id)
 
-micro.utm <- merge(micro.utm, micro.sf.data2, by = "code_micro")
+micro.utm <- micro.utm |>
+             left_join(micro.utm.data2, by = "code_micro")
 
 ```
 
@@ -344,7 +345,8 @@ gwr.result <- exp(m.gwr$GGLM_LEst) |>
 
 ### Distribuição dos coeficientes (RP) GWR
 
-```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 12, fig.width = 15}
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
 
 library(hrbrthemes)
 require(gridExtra)
@@ -428,7 +430,7 @@ grid.arrange(g.cob, g.ivs, g.idhm, g.mort, g.analf, g.gini, ncol=2)
 Os indicadores sociais ICV, gini e o IDHM não apresentaram um bons resultados.
 ### Mapas com a distribuição dos coeficientes (RP) GWR
 
-```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12, results='hide'}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
 # Outro modelo sem os indicadores sociais
 
 m.gwr <- gw.glm(casos ~ offset(log(pop2021)) + cob_mediana + mort5 + analf18 ,"poisson", micro.sp, bw, kernel = 'adaptive', coordinates(micro.sp))
@@ -446,7 +448,7 @@ gwr.result <- exp(m.gwr$GGLM_LEst) |>
 ```
 
 
-```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 12, fig.width = 15}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
 tmap_mode("plot")
 
 mapa.cob <- tm_shape(gwr.result) +
