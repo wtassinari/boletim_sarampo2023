@@ -20,6 +20,206 @@ options(scipen=999)
 load("sarampo.RData")
 ```
 
+## Análise Espacial da Incidência de sarampo.
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+# Convertendo a projeção para UTM
+micro.utm <- st_transform(micro.sf, "+proj=utm +zone=22 +south +ellps=WGS84")
+uf.utm <- st_transform(uf.sf, "+proj=utm +zone=22 +south +ellps=WGS84")
+# Convertendo a projeção para Lat Long (deixando)
+micro.longlat <- st_transform(micro.sf, "+proj=longlat +ellps=WGS84 +datum=WGS84")
+
+# Transfromando em minuscula
+micro.utm$name_micro <- tolower(micro.utm$name_micro)
+casos.micro$nome_micro <- tolower(casos.micro$nome_micro)
+
+# join the databases
+micro.utm <- left_join(micro.utm, casos.micro, by = c("name_micro" = "nome_micro")) 
+micro.utm <- micro.utm |>  mutate(casos = replace_na(casos, 0),
+                                          incid = replace_na(incid, 0))
+
+
+# Crianddo a matriz de vizinhança
+# https://cran.r-project.org/web/packages/spdep/vignettes/nb.html
+library(spdep)
+
+# create row-standardized Queens contiguity weights matrix
+# Calculando a matriz de vizinhança de Queen a partir dos pontos
+# https://mgimond.github.io/Spatial/spatial-autocorrelation-in-r.html
+vizBR <- poly2nb(micro.utm) # queen's neighborhood
+# vizBR2 <- poly2nb(micro.longlat, queen=TRUE)
+
+# Colocando Fernando de Noronha (194) conectada a Recife (192)
+vizBR[[194]][vizBR[[194]] == 0] <- 192
+vizBR[[194]] <- as.integer(as.double(vizBR[[194]]))
+
+# Verificando se existe algum poligono que não tem vizinho
+no_neighs <- which(card(vizBR) == 0) 
+
+lw <- nb2listw(vizBR, style="W", zero.policy=TRUE)
+Inc.lag <- lag.listw(lw, micro.utm$incid)
+
+```
+
+### Calculando o I de moran global para a letalidade
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"}
+# Moran Global
+moran.test(micro.utm$incid, lw)
+```
+
+Observamos que o I de moran global $= 0.38$ $(p-value < 0,01)$
+
+<!-- ## Plotando o correlograma espacial -->
+
+<!-- ```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"} -->
+<!-- moran <- moran.plot(micro.utm$incid, listw = nb2listw(vizBR, style = "W")) -->
+<!-- # moran -->
+<!-- ``` -->
+
+### Moran local
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"}
+local.moran <- localmoran(micro.utm$incid, lw) # calculate the local moran's I
+local.moran <- as.data.frame(local.moran)
+# summary(local.moran)
+```
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, out.width="100%"}
+# manually make a moran plot standarize variables
+micro.utm$s.incid <- as.numeric(scale(micro.utm$incid)) # save to a new column
+#summary(micro.sf$s.incid )
+
+# create a lagged variable
+micro.utm$lag_s.incid <- lag.listw(lw, micro.utm$s.incid)
+#summary(micro.sf$lag_s.incid)
+```
+
+### Mapa da distribuição espacial dos p-valores significativos para a autocorrelação local e o indicativo de incidência.
+
+
+```{r, fig.align='center', fig.width=10, fig.height=7.5, cache=FALSE, echo=FALSE}
+micro.utm$pval <- local.moran[,5]
+
+local.moran.map <- tm_basemap(leaflet::providers$CartoDB.Voyager) +
+                   tm_basemap(leaflet::providers$Esri.WorldImagery, alpha = 0.8) +
+                   tm_basemap(leaflet::providers$Stamen.Toner) +
+                   tm_shape(micro.utm, name="P-valor") +
+                   tm_polygons(col = "pval", title = "P-valor",
+                   breaks = c(0, 0.01, 0.05, 0.1, 1), border.col = "white",
+                   palette = "-PuBu", alpha = 0.6, id = "name_micro") + 
+                   # segunda camada
+                   tm_shape(micro.utm, name="Incidência 100 mil") +
+                   tm_bubbles("incid", col = "incid",
+                   border.col = "black", border.alpha = .2, style="fixed",
+                   breaks=c(0, 1, 5, 10, Inf), palette="-Set1",
+                   title.size="Incidência", title.col="Incidência por 100 mil",
+                   alpha = 0.5, id = "name_micro") +
+                   
+                   tm_legend(outside = TRUE, position=c("left", "top")) +
+                   tm_layout(frame = FALSE) +
+                   tm_scale_bar(width = 0.15, position=c("left", "bottom")) + 
+                   tm_compass(type="rose", position=c("right", "bottom"), size = 3)
+
+local.moran.map + tmap_mode("view")
+
+```
+
+### Lisa Map da incidência.
+
+```{r, fig.align='center', fig.width=10, fig.height=7.5, cache=FALSE, echo=FALSE}
+# Retirando a geometria
+micro.utm.data <- st_drop_geometry(micro.utm)
+
+# high-high quadrant
+micro.utm.data[(micro.utm$s.incid >= 0 & micro.utm$lag_s.incid >= 0) & 
+                (local.moran[, 5] <= 0.05), "quad_sig"] <- "high-high"
+# low-low quadrant
+micro.utm.data[(micro.utm$s.incid <= 0 & micro.utm$lag_s.incid <= 0) & 
+                (local.moran[, 5] <= 0.05), "quad_sig"] <- "low-low"
+# high-low quadrant
+micro.utm.data[(micro.utm$s.incid >= 0 & micro.utm$lag_s.incid <= 0) & 
+                (local.moran[, 5] <= 0.05), "quad_sig"] <- "high-low"
+# low-high quadrant
+micro.utm.data[(micro.utm$s.incid <= 0 & micro.utm$lag_s.incid >= 0) & 
+                (local.moran[, 5] <= 0.05), "quad_sig"] <- "low-high"
+# non-significant observations
+micro.utm.data[(local.moran[, 5] > 0.05), "quad_sig"] <- "not signif."  
+
+micro.utm.data$quad_sig <- as.factor(micro.utm.data$quad_sig)
+micro.utm.data$id <- 1:nrow(micro.utm.data)
+
+# recolocando a geometria
+# micro.coords <- st_coordinates(micro.sf)
+# micro.sf2 <- st_as_sf(micro.sf.data, coords = micro.coords)
+
+micro.utm.data2 <- micro.utm.data |>
+                 select(code_micro, quad_sig, id)
+
+micro.utm <- merge(micro.utm, micro.sf.data2, by = "code_micro")
+
+```
+
+```{r, fig.align='center', fig.width=10, fig.height=7.5, cache=FALSE, echo=FALSE}
+local.moran$id <- 0 # Creating a new variable
+local.moran$id <- 1:nrow(local.moran) # Adding an object ID
+local.moran$pvalue <-
+  round(local.moran[,5], 3) # Rounding the p value to three decimal places
+
+
+library(tigris)
+# library(ggmap)
+# library(spatialEco)
+# library(gstat)
+
+micro.utm <- tigris::geo_join(micro.utm,
+                       local.moran,
+                       "id",
+                       "id")
+
+colors <-
+  c("red", "blue", "white", "lightpink", "skyblue2") # Color Palette
+
+local.moran.map <- tm_basemap(leaflet::providers$CartoDB.Voyager) +
+                   tm_basemap(leaflet::providers$Esri.WorldImagery, alpha = 0.8) +
+                   tm_basemap(leaflet::providers$Stamen.Toner) +
+                   tm_shape(micro.utm) +
+                   tm_fill("quad_sig",
+                            title = "Local Moran's I",
+                            palette = colors,
+                            colorNA = "white", alpha = 0.7,
+                            labels = NULL,
+                           id = "name_micro") +
+                   tm_borders(col = "black",
+                               lwd = 0.5) +
+                  tm_compass() +
+                  tm_layout(
+                            main.title = "Lisa Map da Incidência de Sarampo por 10 mil hab, 2014-2020",
+                            main.title.size = 0.8,
+                            legend.position = c("left", "bottom"),
+                            compass.type = "4star",
+                            legend.text.size = 1,
+                            legend.title.size = 1,
+                            legend.outside = T,
+                            bg.color = "#d0e2ec"
+                                                 ) +
+  # tm_scale_bar(
+  #   text.size = 0.5,
+  #   color.dark = "black",
+  #   color.light = "yellow",
+  #   lwd = 1
+  # ) +
+  # tm_add_legend(
+  #   type = "text",
+  #   col = "black",
+  #   title = "Moran's I p-value",
+  #   text = "0.000"
+  # ) +
+                            tmap_options(unit = "mi")
+
+local.moran.map + tmap_mode("view")
+```
+
 ## Análise da correlação de indicadores sociais e de saúde com os casos de sarampo.
 
 ```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
@@ -41,5 +241,240 @@ pairs.panels(corr.indicadores,
              hist.col = 4,       # Histograms color
              stars = TRUE,       # If TRUE, adds significance level with stars
              ci = TRUE)          # If TRUE, adds confidence intervals
+```
+
+
+## Modelos Simples de Regressão de Poisson
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+m_cob <- glm(casos ~ offset(log(pop2021)) + cob_mediana, family="poisson", micro.utm) ### Cobertura mediana
+m_ivs <- glm(casos ~ offset(log(pop2021)) + ivs, family="poisson", micro.utm) ### IVS
+m_idhm <- glm(casos ~ offset(log(pop2021)) + idhm, family="poisson", micro.utm) ### IDHM
+m_mort5 <- glm(casos ~ offset(log(pop2021)) + mort5, family="poisson", micro.utm) ### Mortalidade < 5 anos
+m_analf18 <- glm(casos ~ offset(log(pop2021)) + analf18, family="poisson", micro.utm) ### Proporção de analfabetos > 18 anos
+m_gini <- glm(casos ~ offset(log(pop2021)) + gini, family="poisson", micro.utm) ### Gini
+
+```
+
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+library("jtools")
+library(huxtable)
+export_summs(m_cob, m_ivs, m_idhm, m_mort5, m_analf18, m_gini, 
+              model.names = c("Modelo Cob","Modelo IVS","Modelo IDHM", "Modelo mort5", "Modelo Analf", "Modelo GINI"),
+              coefs = c("Cob Vacinal %" = "cob_mediana", "IVS" = "ivs", "IDHM" = "idhm", "Mortalidade 5 anos" = "mort5",
+                        "% Analfabeto > 18" = "analf18" , "Gini" = "gini"),
+              error_format = "[{conf.low}, {conf.high}]", exp = TRUE, robust=FALSE)
+```
+
+## Modelos Cheio de Regressão de Poisson
+
+### Verificando a superdispersão com o modelo cheio
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+m_cheio <- glm(casos ~ offset(log(pop2021)) + cob_mediana + ivs + idhm + mort5 + analf18 + gini, family="poisson", micro.utm) 
+
+export_summs(m_cheio, 
+              model.names = c("Modelo Cheio"),
+              coefs = c("Cob Vacinal %" = "cob_mediana", "IVS" = "ivs", "IDHM" = "idhm", "Mortalidade 5 anos" = "mort5",
+                        "% Analfabeto > 18" = "analf18" , "Gini" = "gini"),
+              error_format = "[{conf.low}, {conf.high}]", exp = TRUE, robust=FALSE)
+```
+
+
+### Verificando a superdispersão com o modelo cheio
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+require(AER) # Estimar o parâmetro de superdispersao
+dispersiontest(m_cheio)
+
+```
+
+O parâmetro de superdispersão para esta equação é maior que 1. Sempre que for muito superior a 1 há vestígios de superdispersão no modelo.
+
+
+## Geographically Weighted Poisson Regression (GWPR)
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+
+# https://zia207.github.io/geospatial-r-github.io/geographically-weighted-poisson-regression.html
+
+library(GWmodel)      ### GW models
+library(sp)           ## Data management
+library(spdep)        ## Spatial autocorrelation
+library(RColorBrewer) ## Visualization
+library(classInt)     ## Class intervals
+library(raster)       ## spatial data
+library(grid)         # plot
+library(gridExtra)    # Multiple plot
+library(ggplot2)      # Multiple plot
+library(gtable)
+library(lctools)
+
+```
+
+<!-- ### Bandwidth selection -->
+
+<!-- ```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12} -->
+
+<!-- bw <- gw.glm.bw(casos ~ offset(log(pop2021)) + cob_mediana + ivs + idhm + mort5 + analf18 + gini, "poisson",  micro.sp, coordinates(micro.sp), -->
+<!--                       kernel = 'adaptive', algorithm="exhaustive", optim.method="Nelder-Mead") -->
+
+<!-- ``` -->
+
+## Ajustando o modelo GWR poisson
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12, results= F, results='hide'}
+micro.sp <- as(micro.utm, "Spatial") # transformando no formato espacial
+bw <- 200 
+
+m.gwr <- gw.glm(casos ~ offset(log(pop2021)) + cob_mediana + ivs + idhm + mort5 + analf18 + gini,"poisson", micro.sp, bw, kernel = 'adaptive', coordinates(micro.sp))
+
+
+# Extract GWPR results
+# m.gwr$GGLM_LEst
+# m.gwr$GGLM_LPvalues
+# m.gwr$GGLM_GofFit
+
+gwr.result <- exp(m.gwr$GGLM_LEst) |> 
+              as.data.frame() |>
+              cbind(micro.utm) |> 
+              st_as_sf()
+```
+
+### Distribuição dos coeficientes (RP) GWR
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 12, fig.width = 15}
+
+library(hrbrthemes)
+require(gridExtra)
+
+g.cob <- gwr.result %>%
+    ggplot(aes(x=cob_mediana)) +
+    geom_histogram(fill="#69b3a2", color="darkblue", alpha=0.9) +
+    # ggtitle("Incidência por 100 mil hab, 2014 - 2020") +
+    ylab("Frequência de microregiões") + xlab("RP Cobertura vacinal mediana") +
+    geom_vline(xintercept = median(gwr.result$cob_mediana), linetype="dashed", 
+                color = "red") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+
+g.ivs <- gwr.result %>%
+    ggplot(aes(x=ivs)) +
+    geom_histogram(fill="#69b3a2", color="darkblue", alpha=0.9) +
+    # ggtitle("Incidência por 100 mil hab, 2014 - 2020") +
+    ylab("Frequência de microregiões") + xlab("RP IVS") +
+    geom_vline(xintercept = median(gwr.result$ivs), linetype="dashed", 
+                color = "red") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+
+g.idhm <- gwr.result %>%
+    ggplot(aes(x=idhm)) +
+    geom_histogram(fill="#69b3a2", color="darkblue", alpha=0.9) +
+    # ggtitle("Incidência por 100 mil hab, 2014 - 2020") +
+    ylab("Frequência de microregiões") + xlab("RP IDHM") +
+    geom_vline(xintercept = median(gwr.result$idhm), linetype="dashed", 
+                color = "red") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+
+g.mort <- gwr.result %>%
+    ggplot(aes(x=mort5)) +
+    geom_histogram(fill="#69b3a2", color="darkblue", alpha=0.9) +
+    # ggtitle("Incidência por 100 mil hab, 2014 - 2020") +
+    ylab("Frequência de microregiões") + xlab("RP Mortalidade < 5 anos") +
+    geom_vline(xintercept = median(gwr.result$mort5), linetype="dashed", 
+                color = "red") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+
+g.analf <- gwr.result %>%
+    ggplot(aes(x=analf18)) +
+    geom_histogram(fill="#69b3a2", color="darkblue", alpha=0.9) +
+    # ggtitle("Incidência por 100 mil hab, 2014 - 2020") +
+    ylab("Frequência de microregiões") + xlab("RP Analfabetos > 18 anos") +
+    geom_vline(xintercept = median(gwr.result$analf18), linetype="dashed", 
+                color = "red") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+
+g.gini <- gwr.result %>%
+    ggplot(aes(x=gini)) +
+    geom_histogram(fill="#69b3a2", color="darkblue", alpha=0.9) +
+    # ggtitle("Incidência por 100 mil hab, 2014 - 2020") +
+    ylab("Frequência de microregiões") + xlab("RP Gini") +
+    geom_vline(xintercept = median(gwr.result$gini), linetype="dashed", 
+                color = "red") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+
+grid.arrange(g.cob, g.ivs, g.idhm, g.mort, g.analf, g.gini, ncol=2)
+```
+
+
+Os indicadores sociais ICV, gini e o IDHM não apresentaram um bons resultados.
+### Mapas com a distribuição dos coeficientes (RP) GWR
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12, results='hide'}
+# Outro modelo sem os indicadores sociais
+
+m.gwr <- gw.glm(casos ~ offset(log(pop2021)) + cob_mediana + mort5 + analf18 ,"poisson", micro.sp, bw, kernel = 'adaptive', coordinates(micro.sp))
+
+# Extract GWPR results
+# m.gwr$GGLM_LEst
+# m.gwr$GGLM_LPvalues
+# m.gwr$GGLM_GofFit
+
+gwr.result <- exp(m.gwr$GGLM_LEst) |> 
+              as.data.frame() |>
+              cbind(micro.utm) |> 
+              st_as_sf()
+
+```
+
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 12, fig.width = 15}
+tmap_mode("plot")
+
+mapa.cob <- tm_shape(gwr.result) +
+                   tm_polygons(col = "cob_mediana", title = "RP Cob Vacinal",
+                   breaks = c(0.90, 0.95, 1.00, 1.2), border.col = "white",
+                   palette = "Blues", alpha = 0.6, id = "name_micro") +
+             # segunda camada
+             tm_shape(uf.utm, name="UF") + tm_polygons(alpha = 0, border.col = "black") +
+             tm_layout(frame = FALSE)
+
+mapa.mort <- tm_shape(gwr.result) +
+                   tm_polygons(col = "mort5", title = "RP Mortalidade",
+                   breaks = c(0.56, 0.88, 1.00, 1.10, 1.60), border.col = "white",
+                   palette = "Accent", alpha = 0.6, id = "name_micro") +
+                         # segunda camada
+             tm_shape(uf.utm, name="UF") + tm_polygons(alpha = 0, border.col = "black") +
+             tm_layout(frame = FALSE)
+
+mapa.analf <- tm_shape(gwr.result) +
+                   tm_polygons(col = "analf18", title = "RP Analf",
+                   breaks = c(0.52, 0.78, 1.00, 1.28), border.col = "white",
+                   palette = "-Dark2", alpha = 0.6, id = "name_micro") +
+             # segunda camada
+             tm_shape(uf.utm, name="UF") + tm_polygons(alpha = 0, border.col = "black") +
+             tm_layout(frame = FALSE)
+
+
+tmap_arrange(mapa.cob, mapa.mort, mapa.analf, ncol = 2)
+
 ```
 

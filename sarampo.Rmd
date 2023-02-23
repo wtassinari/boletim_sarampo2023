@@ -442,9 +442,28 @@ micro.longlat <- micro.longlat |>  mutate(casos = replace_na(casos, 0),
 save.image("sarampo.RData")
 ```
 
-### Distribuição da incidência acumulada (por 100 mil ha) dos casos de sarampo por Microrregiões, 2014-2020.
+### Distribuição da incidência acumulada (por 100 mil ha) dos casos de sarampo entre as Microrregiões Brasileiras, 2014-2020.
 
-```{r, fig.align='center', fig.width=8, fig.height=7.5, cache=FALSE, echo=FALSE}
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
+
+library(tidyverse)
+library(hrbrthemes)
+
+p <- micro.longlat %>%
+    ggplot(aes(x=incid)) +
+    geom_histogram(binwidth=15, fill="#69b3a2", color="darkblue", alpha=0.9) +
+    # ggtitle("Incidência por 100 mil hab, 2014 - 2020") +
+    ylab("Frequência de microregiões") + xlab("Incidência por 100 mil hab") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+    
+ggplotly(p)
+```
+
+
+```{r, echo=F, fig.align="center", message=FALSE, warning=FALSE, comments=NA, fig.height = 9, fig.width = 12}
 mytext.micro <- paste("<p>", "UF: ",  micro.longlat$name_state, "<p>",
                 "<p>", "Microregião: ", micro.longlat$name_micro, "<p>",
                 "<p>", "Incidência (100 mil hab): ", round(micro.longlat$incid, 2), "<p>",
